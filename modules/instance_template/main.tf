@@ -103,26 +103,26 @@ resource "google_compute_instance_template" "tpl" {
     }
   }
 
-  network_interface {
-    network            = var.network
-    subnetwork         = var.subnetwork
-    subnetwork_project = var.subnetwork_project
-    network_ip         = length(var.network_ip) > 0 ? var.network_ip : null
-    dynamic "access_config" {
-      for_each = var.access_config
-      content {
-        nat_ip       = try(access_config.value["nat_ip"], null )
-        network_tier = try(access_config.value["network_tier"], null)
-      }
-    }
-    dynamic "alias_ip_range" {
-      for_each = local.alias_ip_range_enabled ? [var.alias_ip_range] : []
-      content {
-        ip_cidr_range         = alias_ip_range.value.ip_cidr_range
-        subnetwork_range_name = alias_ip_range.value.subnetwork_range_name
-      }
-    }
-  }
+  #network_interface {
+  #  network            = var.network
+  #  subnetwork         = var.subnetwork
+  #  subnetwork_project = var.subnetwork_project
+  #  network_ip         = length(var.network_ip) > 0 ? var.network_ip : null
+  #  dynamic "access_config" {
+  #    for_each = var.access_config
+  #    content {
+  #      nat_ip       = try(access_config.value["nat_ip"], null )
+  #      network_tier = try(access_config.value["network_tier"], null)
+  #    }
+  #  }
+  #  dynamic "alias_ip_range" {
+  #    for_each = local.alias_ip_range_enabled ? [var.alias_ip_range] : []
+  #    content {
+  #      ip_cidr_range         = alias_ip_range.value.ip_cidr_range
+  #      subnetwork_range_name = alias_ip_range.value.subnetwork_range_name
+  #    }
+  #  }
+  #}
 
   dynamic "network_interface" {
     for_each = var.additional_networks
@@ -136,6 +136,13 @@ resource "google_compute_instance_template" "tpl" {
         content {
           nat_ip       = try(access_config.value["nat_ip"], null)
           network_tier = try(access_config.value["network_tier"], null)
+        }
+      }
+      dynamic "alias_ip_range" {
+        for_each = local.alias_ip_range_enabled ? [var.alias_ip_range] : []
+        content {
+          ip_cidr_range         = alias_ip_range.value.ip_cidr_range
+          subnetwork_range_name = alias_ip_range.value.subnetwork_range_name
         }
       }
     }
