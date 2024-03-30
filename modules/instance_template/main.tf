@@ -127,7 +127,8 @@ resource "google_compute_instance_template" "tpl" {
   dynamic "network_interface" {
     for_each = var.additional_networks
     content {
-      network            = try(network_interface.value, "network", null)
+      #network            = try(network_interface.value, "network", null)
+      network            = try(network_interface.value, "network")
       subnetwork         = try(network_interface.value, "subnetwork", null)
       subnetwork_project = try(network_interface.value, "subnetwork_project", null)
       network_ip         = try(network_interface.value.network_ip) > 0 ? network_interface.value.network_ip : null
